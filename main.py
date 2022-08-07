@@ -12,7 +12,17 @@ def index():
     out = ""
     if name and date:
         out = schedule(name, date)
-    return ("""SST MTR Schedule Fetcher: Enter
+    return ("""
+    <style>
+    table{width:fit-content;border-collapse: collapse;margin:auto;margin-top: 10px;}
+    td,th{margin-left: auto;
+  margin-right: auto;}
+    td{height:5rem;border: 1px solid white; padding:10px; margin: 10px;}
+    th{height:5rem;border: 3px solid white; padding:10px;font-size:1.2rem;font-weight:bold;}
+    body{background: #000000; color:#ffffff}
+    input,select{background:#444444;color:#ffffff}
+    </style>
+    <h1>SST MTR Schedule Fetcher</h1> Enter
         your name to get a list of all matching entries.
         For exact matches, enter as seen in class register.""" + "<br><br>" +
         """<form action="" method="get">
@@ -24,7 +34,7 @@ def index():
                 </select>
                 <input type="submit" value="Enter">
               </form>""" + str(out) + """<br>Only schedules for 11 Aug and 12 Aug are implemented.<br> If you have any problems or find any bugs,
-my discord is awpgikxdigj#8231<br><br>Made by Ethan Tse Chun Lam, S407 (objectively better computing class)""")
+my discord is awpgikxdigj#8231<br><br>Made by Ethan Tse Chun Lam, S407 (objectively <s>better</s>worse computing class)""")
 
 def schedule(name, date):
     directory = os.getcwd() + "/data"
@@ -35,7 +45,7 @@ def schedule(name, date):
     fullnames = f.readlines()
     f.close()
     try:
-        if date == "Today":
+        if date == "Today":# today is broken for me D:
             temp = str(day.today())
             temp = int(temp.split("-")[2])
             if temp not in [11, 12]:
@@ -84,14 +94,14 @@ def schedule(name, date):
                             pass
                         else:
                             message += " "
-                    message += "'s schedule on " + date[1:] + "</b><br><br>"
+                    message += "'s schedule on " + date[1:] + "</b><br><br><table><tr><th>Timeslot</th><th>Lesson</th><th>Location</th></tr>"
                     for a in range(len(out[b])):
-                        message += str(times[a][:-4]) + ": " + str(out[b][a][0])
+
+                        message += "<tr><td>"+str(times[a][:-4]) + "</td><td>" + str(out[b][a][0])+"</td>"
                         if out[b][a][1] != " ":
-                            message += " (" + out[b][a][1] + ")<br>"
+                            message += "<td>" + out[b][a][1] + "</td></tr>"
                         else:
-                            message += "<br>"
-                        message += "<br>"
+                            message += "<td></td></tr>"
         return message
     except ValueError:
         return "schedule not found"
