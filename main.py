@@ -42,9 +42,8 @@ def index():
               """ + str(out) +
             """</p><p style="font-family: courier"><br>
 Only schedules for 11 Aug and 12 Aug are implemented.<br>
-If you have any problems or find any bugs,
-my discord is awpgikxdigj#8231<br><br>Made by Ethan Tse Chun Lam,
-S407 (objectively better computing class)<br>
+github link: https://github.com/awpgikxdigj/MTRSchedule<br><br>
+Made by Ethan Tse Chun Lam, S407 (objectively better computing class)<br>
 Dark theme by Jerick Seng, S401 (L take)</p>""")
 
 def change(mode):
