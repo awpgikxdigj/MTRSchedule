@@ -1,7 +1,9 @@
 from flask import Flask
 from flask import request
 import os
-from datetime import date as day
+import time
+import datetime
+current = "0"
 
 app = Flask(__name__)
 
@@ -9,22 +11,59 @@ app = Flask(__name__)
 def index():
     name = request.args.get("name", "")
     date = request.args.get("date", "")
+    mode = request.args.get("mode", "0")
     out = ""
     if name and date:
         out = schedule(name, date)
-    return ("""SST MTR Schedule Fetcher: Enter
-        your name to get a list of all matching entries.
-        For exact matches, enter as seen in class register.""" + "<br><br>" +
+    return ("""<style>
+    table{width:fit-content;border-collapse: collapse;margin:auto;margin-top: 10px;}
+    td,th{margin-left: auto;
+  margin-right: auto;}
+    td{height:5rem;border: 1px solid white; padding:10px; margin: 10px;}
+    th{height:5rem;border: 3px solid white; padding:10px;font-size:1.2rem;font-weight:bold;}""" + str(change(mode)) + 
+    """</style>
+<span style="font-size: 18px;">
+<h1><p style="font-family: courier">SST MTR Schedule Fetcher</p></h1>
+<p style="font-family: courier">Enter your name to get a list of all matching entries.
+        For exact matches, enter as seen in class register.</p>""" + "<br>" +
         """<form action="" method="get">
-                <input type="text" name="name">
-                <select name="date" id="date">
+                <input type="text" name="name"
+                style="height:60px; width:500px; font-size:20px;" type="numeric">
+                <select name="date" id="date"
+                style="height:60px; width:200px; font-size:20px;" type="numeric">
                   <option value="Today">Today</option>
                   <option value="11 Aug">11 Aug</option>
                   <option value="12 Aug">12 Aug</option>
                 </select>
-                <input type="submit" value="Enter">
-              </form>""" + str(out) + """<br>Only schedules for 11 Aug and 12 Aug are implemented.<br> If you have any problems or find any bugs,
-my discord is awpgikxdigj#8231<br><br>Made by Ethan Tse Chun Lam, S407 (objectively better computing class)""")
+                <input type="submit" value="Enter" style="height:60px; width:200px; font-size:20px;"><br><br>
+                <input type="checkbox" id="mode" name="mode" value = "1" style="height:20px; width:20px">
+                <label for="mode"><p style="font-family: courier">Toggle Dark mode</p></label>
+              </form><p style="font-family: courier">
+              """ + str(out) +
+            """</p><p style="font-family: courier"><br>
+Only schedules for 11 Aug and 12 Aug are implemented.<br>
+If you have any problems or find any bugs,
+my discord is awpgikxdigj#8231<br><br>Made by Ethan Tse Chun Lam,
+S407 (objectively better computing class)<br>
+Dark theme by Jerick Seng, S401 (L take)</p>""")
+
+def change(mode):
+    global current
+    if mode == "0":
+        return darkmode(current)
+    elif mode == "1":
+        if current == "0":
+            current = "1"
+        elif current == "1":
+            current = "0"
+        return darkmode(current)
+
+def darkmode(mode):
+    if mode == "0":
+        return ""
+    elif mode == "1":
+        return """body{background: #000000; color:#ffffff}
+    input,select{background:#444444;color:#ffffff}"""
 
 def schedule(name, date):
     directory = os.getcwd() + "/data"
@@ -36,8 +75,7 @@ def schedule(name, date):
     f.close()
     try:
         if date == "Today":
-            temp = str(day.today())
-            temp = int(temp.split("-")[2])
+            temp = int(str(datetime.datetime.fromtimestamp(int(time.time()+28800))).split()[0].split("-")[2])
             if temp not in [11, 12]:
                 message = "No schedule for Aug " + temp
                 return message
