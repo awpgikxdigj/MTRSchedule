@@ -1,0 +1,74 @@
+<head>
+    <style>
+        .light {
+            background-color: white;
+            color: black;
+            }
+        .dark {
+            background-color: black;
+            color: white;
+    </style>
+
+    <script language=javascript>
+    <!--
+    function theme(){
+            if (myform.mode.value == "dark") {
+                myform.mode.value = "light";
+                document.body.className = "light";
+                }
+            else {
+                myform.mode.value = "dark";
+                document.body.className = "dark";
+                }
+        }
+    //-->
+    </script>
+
+    <style>
+        table{width:fit-content;border-collapse: collapse;margin:auto;margin-top: 10px;}
+        td,th{margin-left: auto; margin-right: auto;}
+        td{height:5rem;border: 1px solid white; padding:10px; margin: 10px;}
+        th{height:5rem;border: 3px solid white; padding:10px;font-size:1.2rem;font-weight:bold;}
+    </style>
+    
+</head>
+<body class="{{mode}}">
+
+<span style="font-size: 18px;">
+    <h1><p style="font-family: courier">SST MTR Schedule Fetcher</p></h1>
+    <p style="font-family: courier">
+        Enter your name to get a list of all matching entries.<br>For exact matches, enter name as seen in class register.<br><br>
+        <form action="" method="get" name="myform">
+            <input type="text" name="name" style="height:60px; width:500px; font-size:20px;" type="numeric">
+            <select name="date" id="date" style="height:60px; width:200px; font-size:20px;" type="numeric">
+                <option value="Today">Today</option>
+                <option value="11 Aug">11 Aug</option>
+                <option value="12 Aug">12 Aug</option>
+                <option value="15 Aug">15 Aug</option>
+                <option value="16 Aug">16 Aug</option>
+            </select>
+            <input type="submit" value="Enter" style="height:60px; width:200px; font-size:20px;">
+            <input type="hidden" name="mode" value="{{mode}}">
+            <br><br>
+        </form>
+        <button onclick="theme()">Toggle Dark Mode</button>
+    </p>
+
+<p style="font-family: courier">
+
+{% for a in out %}
+        {% for b in a %}
+            {% if b == a[0] %}
+                <b>{{b}}</b><br><br>
+            {% else %}
+                {{b}}<br><br>
+            {% endif %}
+        {% endfor %}
+        <br>
+{% endfor %}
+
+Schedule for 16 Aug has been implemented.<br>
+github link: https://github.com/awpgikxdigj/MTRSchedule<br><br>
+Made by Ethan Tse Chun Lam, S407 (objectively better computing class)<br>
+Dark theme by Jerick Seng, S401 (L take)</p>
+</body>
