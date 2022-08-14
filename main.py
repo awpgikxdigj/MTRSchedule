@@ -10,7 +10,6 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     req = request.full_path
-    print(req)
     name = ""
     date = ""
     mode = "light"
@@ -22,7 +21,6 @@ def index():
     out = ""
     if name and date:
         out = schedule(name, date)
-    print(out)
     return render_template("index.html", out = out, mode = mode)
 
 def schedule(name, date):
@@ -36,7 +34,7 @@ def schedule(name, date):
     try:
         if date == "Today":
             temp = int(str(datetime.datetime.fromtimestamp(int(time.time()+28800))).split()[0].split("-")[2])
-            if temp not in [11, 12, 15, 16]:
+            if temp not in [11, 12, 15, 16, 17, 18, 19]:
                 message = [["No schedule for Aug " + str(temp)]]
                 return message
             else:
@@ -48,6 +46,15 @@ def schedule(name, date):
         for b in fullnames:
             if name in b:
                 picknames.append(b.strip())
+        name = name.split()
+        for b in fullnames:
+            c = b.split()
+            for a in name:
+                if a not in c:
+                    break
+            else:
+                if b.strip() not in picknames:
+                    picknames.append(b.strip())
         
         times = sorted(os.listdir(directory + "/dates" + date))
         if ".DS_Store" in times:
@@ -60,7 +67,6 @@ def schedule(name, date):
                 classes = f.readlines()
                 for b in classes:
                     details = b.split("█")
-                    print(details)
                     names = details[2].strip().split("|")
                     if c in names:
                         intout.append([details[0], details[1]])
