@@ -1,0 +1,27 @@
+<head>
+    <style>
+        .light {
+            background-color: white;
+            color: black;
+            }
+        .dark {
+            background-color: black;
+            color: white;
+    </style>
+</head>
+
+<body class="{{mode}}">
+<span style="font-size: 18px;">
+    <h1><p style="font-family: courier">SST MTR Schedule Fetcher</p></h1>
+    <p style="font-family: courier">
+    List of Attendees for: {{lesson[1][0]}} at ({{lesson[0]}})<br><br>
+        {% for a in out %}
+            {% if a|length == 4 %}
+                <br><b>{{a}}</b><br>
+            {% else %}
+                {{a}}<br>
+            {% endif %}
+        {% endfor %}
+
+<br> For all you stalkers out there.
+

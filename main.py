@@ -1,9 +1,10 @@
 from flask import Flask, render_template
 from flask import request
-from flask import jsonify
+from difflib import SequenceMatcher
 import os
 import time
 import datetime
+mode = "light"
 
 app = Flask(__name__)
 
@@ -12,7 +13,7 @@ def index():
     req = request.full_path
     name = ""
     date = ""
-    mode = "light"
+    global mode
     if "&" in req:
         req = req.split("&")
         name = req[0].split("=")[1]
@@ -21,7 +22,55 @@ def index():
     out = ""
     if name and date:
         out = schedule(name, date)
-    return render_template("index.html", out = out, mode = mode)
+    return render_template("index.html", out = out, mode = mode, date = date)
+
+@app.route("/lesson<lesson>")
+def shownames(lesson):
+    global mode
+    lesson = lesson.replace("|", "/")
+    directory = os.getcwd() + "/data"
+    lesson = lesson.replace("%20", " ")
+    lesson= [lesson[:lesson.index(":")], lesson[lesson.index(":")+1:]]
+    lesson[1] = lesson[1].split("█")
+    date = lesson[1][1]
+    if date == "Today":
+        temp = int(str(datetime.datetime.fromtimestamp(int(time.time()+28800))).split()[0].split("-")[2])
+        if temp not in [11, 12, 15, 16, 17, 18, 19]:
+            message = [["No schedule for Aug " + str(temp)]]
+            return message
+        else:
+            date = str(int(temp)) + " Aug"
+    f = open(directory + "/dates" + "/" + date + "/" + lesson[0] + ".txt", "r")
+    classes = f.readlines()
+    f.close()
+    lesson[1][0] = lesson[1][0].strip()
+    inter = []
+    for a in classes:
+        details = a.split("█")
+        if lesson[1][0] == (details[0] + " (" + details[1] + ")"):
+            inter = details[2].strip().split("|")
+    for a in range(1, 9):
+        inter.append("S40" + str(a))
+    f = open(directory + "/namelist.txt", "r")
+    out = f.readlines()
+    f.close()
+    removel = []
+    for a in out:
+        if a.strip() not in inter:
+            removel.append(a)
+    for a in removel:
+        out.remove(a)
+    for a in range(len(out)):
+        temp = out[a].strip().split()
+        new = ""
+        for b in temp:
+            new += b.capitalize()
+            if b == temp[-1]:
+                pass
+            else:
+                new += " "
+        out[a] = new
+    return render_template("names.html", out = out, lesson = lesson, mode = mode)
 
 def schedule(name, date):
     directory = os.getcwd() + "/data"
@@ -41,10 +90,12 @@ def schedule(name, date):
                 date = "/" + str(int(temp)) + " Aug"
         else:
             date = "/" + date
-        name = name.lower().replace("+", " ")
+        name = name.lower().replace("+", " ").replace("%2c", ",")
         picknames = []
         for b in fullnames:
-            if name in b:
+            if len(b) == 4:
+                pass
+            elif name in b:
                 picknames.append(b.strip())
         name = name.split()
         for b in fullnames:
